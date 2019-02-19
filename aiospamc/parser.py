@@ -215,14 +215,14 @@ class Parser:
 
         Returns
         -------
-        :obj:`str`
+        :obj:`dict`
         '''
 
         self.skip(self.whitespace)
-        algorithm = self.consume(rb'zlib').group()
+        self.consume(rb'zlib').group()
         self.skip(self.whitespace)
 
-        return algorithm.decode()
+        return {}
 
     @checkpoint
     def content_length_value(self):
@@ -230,14 +230,14 @@ class Parser:
 
         Returns
         -------
-        :obj:`int`
+        :obj:`dict`
         '''
 
         self.skip(self.whitespace)
         length = int(self.consume(rb'\d+').group())
         self.skip(self.whitespace)
 
-        return length
+        return {'length': length}
 
     @checkpoint
     def message_class_value(self):
@@ -245,7 +245,7 @@ class Parser:
 
         Returns
         -------
-        :class:`aiospamc.options.MessageClassOption`
+        :obj:`dict`
         '''
 
         self.skip(self.whitespace)
@@ -253,7 +253,7 @@ class Parser:
             rb'(ham|spam)').group() == b'ham' else MessageClassOption.spam
         self.skip(self.whitespace)
 
-        return m_class
+        return {'value': m_class}
 
     @checkpoint
     def set_remove_value(self):
@@ -261,14 +261,14 @@ class Parser:
 
         Returns
         -------
-        :class:`aiospamc.options.ActionOption`
+        :obj:`dict`
         '''
 
         self.skip(self.whitespace)
         action = self.consume(rb'(local|remote)([ \t]*,[ \t]*(local|remote))?').group()
         self.skip(self.whitespace)
 
-        return ActionOption(local=b'local' in action, remote=b'remote' in action)
+        return {'action': ActionOption(local=b'local' in action, remote=b'remote' in action)}
 
     @checkpoint
     def spam_value(self):
@@ -302,14 +302,14 @@ class Parser:
 
         Returns
         -------
-        :obj:`str`
+        :obj:`dict`
         '''
 
         self.skip(self.whitespace)
         username = self.consume(rb'[a-zA-Z0-9-_]+').group()
         self.skip(self.whitespace)
 
-        return username.decode()
+        return {'name': username.decode()}
 
     @checkpoint
     def header(self):
@@ -322,33 +322,27 @@ class Parser:
         '''
 
         self.skip(self.whitespace)
-        name = self.consume(rb'[a-zA-Z0-9_-]+').group()
+        name = self.consume(rb'[a-zA-Z0-9_-]+').group().decode()
         self.skip(self.whitespace)
         self.consume(rb':')
-        if name == b'Compress':
-            self.compress_value()
-            return headers.Compress()
-        elif name == b'Content-length':
-            return headers.ContentLength(length=self.content_length_value())
-        elif name == b'DidRemove':
-            return headers.DidRemove(action=self.set_remove_value())
-        elif name == b'DidSet':
-            return headers.DidSet(action=self.set_remove_value())
-        elif name == b'Message-class':
-            return headers.MessageClass(value=self.message_class_value())
-        elif name == b'Remove':
-            return headers.Remove(action=self.set_remove_value())
-        elif name == b'Set':
-            return headers.Set(action=self.set_remove_value())
-        elif name == b'Spam':
-            return headers.Spam(**self.spam_value())
-        elif name == b'User':
-            return headers.User(name=self.user_value())
+
+        mappings = {
+            'Compress': (headers.Compress, self.compress_value),
+            'Content-length': (headers.ContentLength, self.content_length_value),
+            'DidRemove': (headers.DidRemove, self.set_remove_value),
+            'DidSet': (headers.DidSet, self.set_remove_value),
+            'Message-class': (headers.MessageClass, self.message_class_value),
+            'Remove': (headers.Remove, self.set_remove_value),
+            'Set': (headers.Set, self.set_remove_value),
+            'Spam': (headers.Spam, self.spam_value),
+            'User': (headers.User, self.user_value)
+        }
+
+        if name in mappings:
+            header, value_func = mappings[name]
+            return header(**value_func())
         else:
-            return headers.XHeader(
-                    name=name.decode(),
-                    value=self.consume(rb'.+(?=\r\n)').group().decode()
-            )
+            return headers.XHeader(name, self.consume(rb'.+(?=\r\n)').group().decode())
 
     def headers(self):
         '''Consumes all headers.

@@ -151,7 +151,7 @@ def test_parser_compress_value_success(data):
     p = Parser(data)
     result = p.compress_value()
 
-    assert result == "zlib"
+    assert result == {}
 
 
 def test_parser_compress_value_fail():
@@ -169,7 +169,7 @@ def test_parser_content_length_value_success(data, expected):
     p = Parser(data)
     result = p.content_length_value()
 
-    assert result == expected
+    assert result == {'length': expected}
 
 
 def test_parser_content_length_value_fail():
@@ -189,7 +189,7 @@ def test_parser_message_class_value_success(data, expected):
     p = Parser(data)
     result = p.message_class_value()
 
-    assert result == expected
+    assert result == {'value': expected}
 
 
 def test_parser_message_class_value_fail():
@@ -209,8 +209,7 @@ def test_parser_set_remove_value_success(data, expected):
     p = Parser(data)
     result = p.set_remove_value()
 
-    assert isinstance(result, ActionOption)
-    assert result == expected
+    assert result == {'action': expected}
 
 
 def test_parser_set_remove_value_fail():
@@ -244,7 +243,7 @@ def test_parser_spam_value_fail():
 def test_parser_user_value_success():
     p = Parser(b' user-name_123 ')
 
-    assert p.user_value() == "user-name_123"
+    assert p.user_value() == {'name': 'user-name_123'}
 
 
 @pytest.mark.parametrize('data,expected', [
