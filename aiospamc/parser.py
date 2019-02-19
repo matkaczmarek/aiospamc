@@ -6,10 +6,10 @@
 import re
 from functools import wraps
 
-import aiospamc.headers
-import aiospamc.options
-import aiospamc.requests
-import aiospamc.responses
+from . import headers
+from .options import MessageClassOption, ActionOption
+from . import requests
+from . import responses
 
 
 class RawRequest:
@@ -250,8 +250,8 @@ class Parser:
         '''
 
         self.skip(self.whitespace)
-        m_class = aiospamc.options.MessageClassOption.ham if self.consume(
-            rb'(ham|spam)').group() == b'ham' else aiospamc.options.MessageClassOption.spam
+        m_class = MessageClassOption.ham if self.consume(
+            rb'(ham|spam)').group() == b'ham' else MessageClassOption.spam
         self.skip(self.whitespace)
 
         return m_class
@@ -269,7 +269,7 @@ class Parser:
         action = self.consume(rb'(local|remote)([ \t]*,[ \t]*(local|remote))?').group()
         self.skip(self.whitespace)
 
-        return aiospamc.options.ActionOption(local=b'local' in action, remote=b'remote' in action)
+        return ActionOption(local=b'local' in action, remote=b'remote' in action)
 
     @checkpoint
     def spam_value(self):
@@ -328,25 +328,25 @@ class Parser:
         self.consume(rb':')
         if name == b'Compress':
             self.compress_value()
-            return aiospamc.headers.Compress()
+            return headers.Compress()
         elif name == b'Content-length':
-            return aiospamc.headers.ContentLength(length=self.content_length_value())
+            return headers.ContentLength(length=self.content_length_value())
         elif name == b'DidRemove':
-            return aiospamc.headers.DidRemove(action=self.set_remove_value())
+            return headers.DidRemove(action=self.set_remove_value())
         elif name == b'DidSet':
-            return aiospamc.headers.DidSet(action=self.set_remove_value())
+            return headers.DidSet(action=self.set_remove_value())
         elif name == b'Message-class':
-            return aiospamc.headers.MessageClass(value=self.message_class_value())
+            return headers.MessageClass(value=self.message_class_value())
         elif name == b'Remove':
-            return aiospamc.headers.Remove(action=self.set_remove_value())
+            return headers.Remove(action=self.set_remove_value())
         elif name == b'Set':
-            return aiospamc.headers.Set(action=self.set_remove_value())
+            return headers.Set(action=self.set_remove_value())
         elif name == b'Spam':
-            return aiospamc.headers.Spam(**self.spam_value())
+            return headers.Spam(**self.spam_value())
         elif name == b'User':
-            return aiospamc.headers.User(name=self.user_value())
+            return headers.User(name=self.user_value())
         else:
-            return aiospamc.headers.XHeader(
+            return headers.XHeader(
                     name=name.decode(),
                     value=self.consume(rb'.+(?=\r\n)').group().decode()
             )
@@ -455,7 +455,7 @@ class Parser:
 
         code = int(self.consume(rb'\d+').group())
         try:
-            return aiospamc.responses.Status(code)
+            return responses.Status(code)
         except ValueError:
             return code
 

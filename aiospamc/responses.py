@@ -4,11 +4,11 @@
 
 import enum
 
-from aiospamc.common import RequestResponseBase
-from aiospamc.exceptions import (UsageException, DataErrorException, NoInputException, NoUserException,
-                                 NoHostException, UnavailableException, InternalSoftwareException, OSErrorException,
-                                 OSFileException, CantCreateException, IOErrorException, TemporaryFailureException,
-                                 ProtocolException, NoPermissionException, ConfigException, TimeoutException)
+from .common import RequestResponseBase
+from .exceptions import (UsageException, DataErrorException, NoInputException, NoUserException,
+                         NoHostException, UnavailableException, InternalSoftwareException, OSErrorException,
+                         OSFileException, CantCreateException, IOErrorException, TemporaryFailureException,
+                         ProtocolException, NoPermissionException, ConfigException, TimeoutException)
 
 
 class Status(enum.IntEnum):

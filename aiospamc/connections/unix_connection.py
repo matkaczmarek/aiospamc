@@ -4,9 +4,9 @@
 
 import asyncio
 
-from aiospamc.connections import Connection
-from aiospamc.connections import ConnectionManager
-from aiospamc.exceptions import AIOSpamcConnectionFailed
+from . import Connection
+from . import ConnectionManager
+from ..exceptions import AIOSpamcConnectionFailed
 
 
 class UnixConnectionManager(ConnectionManager):

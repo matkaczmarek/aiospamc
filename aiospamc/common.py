@@ -4,7 +4,7 @@
 
 import zlib
 
-from aiospamc.headers import ContentLength
+from .headers import ContentLength
 
 
 class RequestResponseBase:

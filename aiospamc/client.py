@@ -6,15 +6,15 @@ import asyncio
 from functools import partial, wraps
 import logging
 
-from aiospamc.exceptions import (BadResponse, ResponseException,
+from .exceptions import (BadResponse, ResponseException,
                                  UsageException, DataErrorException, NoInputException, NoUserException,
                                  NoHostException, UnavailableException, InternalSoftwareException, OSErrorException,
                                  OSFileException, CantCreateException, IOErrorException, TemporaryFailureException,
                                  ProtocolException, NoPermissionException, ConfigException, TimeoutException)
-from aiospamc.headers import Compress, MessageClass, Remove, Set, User
-from aiospamc.parser import parse, ParseError
-from aiospamc.requests import Request
-from aiospamc.responses import Response, Status
+from .headers import Compress, MessageClass, Remove, Set, User
+from .parser import parse, ParseError
+from .requests import Request
+from .responses import Response, Status
 
 
 def _add_compress_header(func):

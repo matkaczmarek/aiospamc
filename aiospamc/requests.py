@@ -2,7 +2,7 @@
 
 '''Contains all requests that can be made to the SPAMD service.'''
 
-from aiospamc.common import RequestResponseBase
+from .common import RequestResponseBase
 
 
 class Request(RequestResponseBase):

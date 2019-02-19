@@ -4,7 +4,7 @@
 
 import getpass
 
-from aiospamc.options import ActionOption, MessageClassOption
+from .options import ActionOption, MessageClassOption
 
 
 class Header:
