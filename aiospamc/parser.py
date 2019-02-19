@@ -12,6 +12,23 @@ import aiospamc.requests
 import aiospamc.responses
 
 
+class RawRequest:
+    def __init__(self, method, version, headers, body):
+        self.method = method
+        self.version = version
+        self.headers = headers
+        self.body = body
+
+
+class RawResponse:
+    def __init__(self, version, status_code, message, headers, body):
+        self.version = version
+        self.status_code = status_code
+        self.message = message
+        self.headers = headers
+        self.body = body
+
+
 class ParseError(Exception):
     '''An exception occurring when parsing.
 
@@ -54,16 +71,23 @@ def checkpoint(func):
 class Parser:
     '''Parser object for requests and responses.'''
 
-    def __init__(self, string=None):
+    def __init__(self, string=None, request_cls=RawRequest, response_cls=RawResponse):
         '''Parser constructor.
 
         Parameters
         ----------
         string : :obj:`str`, optional
             The string to parse.
+        request_cls : callable
+
+        response_cls : callable
+
         '''
+
         self.string = string or b''
         self.index = 0
+        self.request_cls = request_cls
+        self.response_cls = response_cls
 
     def advance(self, by):
         '''Advance the current index by number of bytes.
@@ -406,7 +430,7 @@ class Parser:
         else:
             b = None
 
-        return aiospamc.requests.Request(verb=m, version=v, headers=h, body=b)
+        return self.request_cls(method=m, version=v, headers=h, body=b)
 
     # Response functions
 
@@ -474,10 +498,11 @@ class Parser:
         else:
             b = None
 
-        return aiospamc.responses.Response(version=v, status_code=c, message=m, headers=h,
+        return self.response_cls(version=v, status_code=c, message=m, headers=h,
                                            body=b)
 
-def parse(string):
+
+def parse(string, request_cls=RawRequest, response_cls=RawResponse):
     '''Parses a request or response.
 
     Returns
@@ -485,7 +510,7 @@ def parse(string):
     :class:`aiospamc.requests.Request` or :class:`aiospamc.responses.Response`
     '''
 
-    parser = Parser(string)
+    parser = Parser(string, request_cls, response_cls)
 
     try:
         return parser.request()

@@ -3,7 +3,7 @@
 '''Contains the Client class that is used to interact with SPAMD.'''
 
 import asyncio
-from functools import wraps
+from functools import partial, wraps
 import logging
 
 from aiospamc.exceptions import (BadResponse, ResponseException,
@@ -14,7 +14,7 @@ from aiospamc.exceptions import (BadResponse, ResponseException,
 from aiospamc.headers import Compress, MessageClass, Remove, Set, User
 from aiospamc.parser import parse, ParseError
 from aiospamc.requests import Request
-from aiospamc.responses import Status
+from aiospamc.responses import Response, Status
 
 
 def _add_compress_header(func):
@@ -117,7 +117,7 @@ class Client:
         self._ssl = ssl
         self.loop = loop or asyncio.get_event_loop()
 
-        self.parser = parse
+        self.parser = partial(parse, request_cls=Request, response_cls=Response)
 
         self.logger = logging.getLogger(__name__)
         self.logger.debug('Created instance of %r', self)
