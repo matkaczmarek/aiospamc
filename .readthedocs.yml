@@ -6,9 +6,7 @@ python:
   version: 3.7
   install:
     - method: pip
-      path: sphinxcontrib-asyncio
-    - method: pip
-      path: .
+      path: .[docs]
 
 sphinx:
   builder: html
