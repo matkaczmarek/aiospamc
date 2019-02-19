@@ -36,3 +36,7 @@ docs = ["sphinx", "sphinxcontrib-asyncio"]
 
 [tool.poetry.scripts]
 test = 'pytest:main'
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"
