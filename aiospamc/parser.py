@@ -8,8 +8,7 @@ from functools import wraps
 
 from . import headers
 from .options import MessageClassOption, ActionOption
-from . import requests
-from . import responses
+from .status import Status
 
 
 class RawRequest:
@@ -455,7 +454,7 @@ class Parser:
 
         code = int(self.consume(rb'\d+').group())
         try:
-            return responses.Status(code)
+            return Status(code)
         except ValueError:
             return code
 

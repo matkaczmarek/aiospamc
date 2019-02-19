@@ -13,7 +13,8 @@ from aiospamc.exceptions import (BadResponse, ResponseException,
                                  OSFileException, CantCreateException, IOErrorException, TemporaryFailureException,
                                  ProtocolException, NoPermissionException, ConfigException, TimeoutException)
 from aiospamc.headers import Compress, User
-from aiospamc.responses import Response, Status
+from aiospamc.responses import Response
+from aiospamc.status import Status
 
 
 def test_client_repr():

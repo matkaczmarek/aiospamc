@@ -3,15 +3,10 @@
 import zlib
 
 import pytest
-# from conftest import *
 
-# from aiospamc.exceptions import (BadResponse,
-#                                  UsageException, DataErrorException, NoInputException, NoUserException,
-#                                  NoHostException, UnavailableException, InternalSoftwareException, OSErrorException,
-#                                  OSFileException, CantCreateException, IOErrorException, TemporaryFailureException,
-#                                  ProtocolException, NoPermissionException, ConfigException, TimeoutException)
 from aiospamc.headers import Compress
-from aiospamc.responses import Response, Status
+from aiospamc.responses import Response
+from aiospamc.status import Status
 
 
 def test_response_instantiates():

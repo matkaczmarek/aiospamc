@@ -5,9 +5,8 @@ import pytest
 from unittest.mock import Mock
 
 from aiospamc.headers import Compress, ContentLength, DidRemove, DidSet, Remove, Set, MessageClass, Spam, User, XHeader
-from aiospamc.requests import Request
-from aiospamc.responses import Response, Status
 from aiospamc.options import ActionOption, MessageClassOption
+from aiospamc.status import Status
 
 from aiospamc.parser import parse, Parser, ParseError
 

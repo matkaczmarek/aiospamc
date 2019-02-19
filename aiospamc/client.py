@@ -14,7 +14,8 @@ from .exceptions import (BadResponse, ResponseException,
 from .headers import Compress, MessageClass, Remove, Set, User
 from .parser import parse, ParseError
 from .requests import Request
-from .responses import Response, Status
+from .responses import Response
+from .status import Status
 
 
 def _add_compress_header(func):

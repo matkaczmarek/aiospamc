@@ -1,0 +1,47 @@
+#!/usr/bin/env python3
+
+'''Contains status code enumeration.'''
+
+from enum import IntEnum
+
+from .exceptions import (UsageException, DataErrorException, NoInputException, NoUserException,
+                         NoHostException, UnavailableException, InternalSoftwareException, OSErrorException,
+                         OSFileException, CantCreateException, IOErrorException, TemporaryFailureException,
+                         ProtocolException, NoPermissionException, ConfigException, TimeoutException)
+
+
+class Status(IntEnum):
+    '''Enumeration of status codes that the SPAMD will accompany with a
+    response.
+
+    Reference: https://svn.apache.org/repos/asf/spamassassin/trunk/spamd/spamd.raw
+    Look for the %resphash variable.
+    '''
+
+    #pylint: disable=C0326
+    def __new__(cls, value, exception=None, description=''):
+        #pylint: disable=protected-access
+        obj = int.__new__(cls, value)
+        obj._value_ = value
+        obj.exception = exception
+        obj.description = description
+
+        return obj
+
+    EX_OK           = 0,    None,          'No problems'
+    EX_USAGE        = 64, UsageException, 'Command line usage error'
+    EX_DATAERR      = 65, DataErrorException, 'Data format error'
+    EX_NOINPUT      = 66, NoInputException, 'Cannot open input'
+    EX_NOUSER       = 67, NoUserException, 'Addressee unknown'
+    EX_NOHOST       = 68, NoHostException, 'Host name unknown'
+    EX_UNAVAILABLE  = 69, UnavailableException, 'Service unavailable'
+    EX_SOFTWARE     = 70, InternalSoftwareException, 'Internal software error'
+    EX_OSERR        = 71, OSErrorException, 'System error (e.g., can\'t fork)'
+    EX_OSFILE       = 72, OSFileException, 'Critical OS file missing'
+    EX_CANTCREAT    = 73, CantCreateException, 'Can\'t create (user) output file'
+    EX_IOERR        = 74, IOErrorException, 'Input/output error'
+    EX_TEMPFAIL     = 75, TemporaryFailureException, 'Temp failure; user is invited to retry'
+    EX_PROTOCOL     = 76, ProtocolException, 'Remote error in protocol'
+    EX_NOPERM       = 77, NoPermissionException, 'Permission denied'
+    EX_CONFIG       = 78, ConfigException, 'Configuration error'
+    EX_TIMEOUT      = 79, TimeoutException, 'Read timeout'
