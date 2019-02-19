@@ -91,6 +91,12 @@ def response_invalid():
     return b'Invalid response'
 
 
+@pytest.fixture
+def request_with_body():
+    '''Request with Content-length header and body.'''
+    return b'CHECK SPAMC/1.5\r\nContent-length : 6\r\n\r\nA body'
+
+
 # Response exceptions
 @pytest.fixture
 def ex_usage():

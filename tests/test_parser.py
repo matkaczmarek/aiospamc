@@ -8,7 +8,7 @@ from aiospamc.headers import Compress, ContentLength, DidRemove, DidSet, Remove,
 from aiospamc.options import ActionOption, MessageClassOption
 from aiospamc.status import Status
 
-from aiospamc.parser import parse, Parser, ParseError
+from aiospamc.parser import parse, Parser, ParseError, RawRequest, RawResponse
 
 
 def test_parseerror_is_exception():
@@ -370,3 +370,60 @@ def test_parser_parse_success(data):
 def test_parser_parse_fail():
     with pytest.raises(ParseError):
         parse(b'invalid')
+
+
+def test_parser_has_default_classes():
+    p = Parser()
+
+    assert RawRequest == p.request_cls
+    assert RawResponse == p.response_cls
+
+
+def test_parser_custom_request_object():
+    class CustomRequest:
+        pass
+
+    class CustomResponse:
+        pass
+
+    p = Parser(request_cls=CustomRequest, response_cls=CustomResponse)
+
+    assert CustomRequest == p.request_cls
+    assert CustomResponse == p.response_cls
+
+
+def test_parser_custom_request_written(request_with_body):
+    class CustomRequest:
+        def __init__(self, method, version, headers, body):
+            self.method = method
+            self.version = version
+            self.headers = headers
+            self.body = body
+
+    result = parse(request_with_body, request_cls=CustomRequest)
+
+    assert 'CHECK' == result.method
+    assert '1.5' == result.version
+    assert 1 == len(result.headers)
+    assert isinstance(result.headers[0], ContentLength)
+    assert 6 == result.headers[0].length
+    assert b'A body' == result.body
+
+
+def test_parser_custom_response_written(response_with_body):
+    class CustomResponse:
+        def __init__(self, version, status_code, message, headers, body):
+            self.version = version
+            self.status_code = status_code
+            self.message = message
+            self.headers = headers
+            self.body = body
+
+    result = parse(response_with_body, request_cls=CustomResponse)
+
+    assert '1.5' == result.version
+    assert Status.EX_OK == result.status_code
+    assert 1 == len(result.headers)
+    assert isinstance(result.headers[0], ContentLength)
+    assert 10 == result.headers[0].length
+    assert b'Test body\n' == result.body
