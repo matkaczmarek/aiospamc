@@ -18,38 +18,6 @@ from .responses import Response
 from .status import Status
 
 
-def _add_compress_header(func):
-    '''If the class instance's :attribute:`compress` boolean is `True` then the
-    :class:`aiospamc.headers.Compress` header is added to the
-    :class:`aiospamc.requests.Request` object.'''
-
-    @wraps(func)
-    async def wrapper(cls, request):
-        if cls.compress and cls.body:
-            cls.logger.debug('Added Compress header to request (%s)', id(request))
-            request.add_header(Compress())
-        return await func(cls, request)
-
-    return wrapper
-
-
-def _add_user_header(func):
-    '''If the class instance's :attribute:`user` boolean is `True` then the
-    :class:`aiospamc.headers.User` header is added to the
-    :class:`aiospamc.requests.Request` object.'''
-
-    @wraps(func)
-    async def wrapper(cls, request):
-        if cls.user:
-            cls.logger.debug('Added user header for \'%s\' to request (%s)',
-                             cls.user,
-                             id(request))
-            request.add_header(User(cls.user))
-        return await func(cls, request)
-
-    return wrapper
-
-
 class Client:
     '''Client object for interacting with SPAMD.
 
@@ -118,7 +86,7 @@ class Client:
         self._ssl = ssl
         self.loop = loop or asyncio.get_event_loop()
 
-        self.parser = partial(parse, request_cls=Request, response_cls=Response)
+        self.parser = partial(parse, request_cls=Request.from_parser, response_cls=Response.from_parser)
 
         self.logger = logging.getLogger(__name__)
         self.logger.debug('Created instance of %r', self)
@@ -177,8 +145,8 @@ class Client:
         else:
             raise ResponseException(response)
 
-    @_add_compress_header
-    @_add_user_header
+    # @_add_compress_header
+    # @_add_user_header
     async def send(self, request):
         '''Sends a request to the SPAMD service.
 

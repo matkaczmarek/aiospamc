@@ -7,25 +7,9 @@ import re
 from functools import wraps
 
 from . import headers
+from .common import RawRequest, RawResponse
 from .options import MessageClassOption, ActionOption
 from .status import Status
-
-
-class RawRequest:
-    def __init__(self, method, version, headers, body):
-        self.method = method
-        self.version = version
-        self.headers = headers
-        self.body = body
-
-
-class RawResponse:
-    def __init__(self, version, status_code, message, headers, body):
-        self.version = version
-        self.status_code = status_code
-        self.message = message
-        self.headers = headers
-        self.body = body
 
 
 class ParseError(Exception):

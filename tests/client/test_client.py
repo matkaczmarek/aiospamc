@@ -4,7 +4,6 @@ import pytest
 from asynctest import CoroutineMock, Mock
 
 from aiospamc import Client
-from aiospamc.client import _add_user_header, _add_compress_header
 from aiospamc.connections.tcp_connection import TcpConnectionManager
 from aiospamc.connections.unix_connection import UnixConnectionManager
 from aiospamc.exceptions import (BadResponse, ResponseException,

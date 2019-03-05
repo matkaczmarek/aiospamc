@@ -44,6 +44,25 @@ def spam():
 
 
 @pytest.fixture
+def gbk_message():
+    return ('From: wevsty <example@example.com>\n'
+            'To: Mike Caley <mjcaley@example.com>\n'
+            'Subject: =?UTF-8?B?5Lit5paH5rWL6K+V?=\n'
+            'Message-ID: <example@example.com>\n'
+            'Date: Tue, 15 Jan 2019 15:26:51 +0800\n'
+            'X-Mozilla-Draft-Info: internal/draft; vcard=0; receipt=0; DSN=0; uuencode=0;\n'
+            ' attachmentreminder=0; deliveryformat=4\n'
+            'User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101\n'
+            ' Thunderbird/60.3.3\n'
+            'MIME-Version: 1.0\n'
+            'Content-Type: text/html; charset=gbk\n'
+            'Content-Transfer-Encoding: 8bit\n'
+            '\n'
+            '这是Unicode文字.\n'
+            'This is Unicode characters.\n')
+
+
+@pytest.fixture
 def request_ping():
     '''PING request in bytes.'''
     return b'PING SPAMC/1.5\r\n\r\n'
